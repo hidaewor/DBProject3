@@ -71,6 +71,14 @@ public class TestTupleGenerator
             } // for
             out.println ();
         } // for
+        
+        /* Begin Testing SELECT*/
+        
+        Table t_select = tups.select (t -> t[movie.col("title")].equals ("Star_Wars") &&
+                t[movie.col("year")].equals (1977));
+         t_select.print ();
+
     } // main
 
+   
 } // TestTupleGenerator
