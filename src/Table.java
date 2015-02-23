@@ -81,7 +81,10 @@ public class Table implements Serializable
         domain    = _domain;
         key       = _key;
         tuples    = new ArrayList <> ();
-        index     = new BpTreeMap (KeyType.class, Comparable[].class);       // also try BPTreeMap, LinHashMap or ExtHashMap
+       //index     = new LinHashMap (KeyType.class, Comparable[].class, 2); 
+       //index     = new TreeMap <> ();       
+       //index	  = new BpTreeMap (KeyType.class, Comparable[].class); 
+        index = new ExtHashMap (KeyType.class, Comparable[].class, 2);
     } // constructor
 
     /************************************************************************************
@@ -101,8 +104,11 @@ public class Table implements Serializable
         domain    = _domain;
         key       = _key;
         tuples    = _tuples;
-        index     = new BpTreeMap (KeyType.class, Comparable[].class);      // also try BPTreeMap, LinHashMap or ExtHashMap
-    } // constructor
+        //index     = new LinHashMap (KeyType.class, Comparable[].class, 2); 
+        //index     = new TreeMap <> ();       
+        //index	  = new BpTreeMap (KeyType.class, Comparable[].class); 
+         index = new ExtHashMap (KeyType.class, Comparable[].class, 2);
+        } // constructor
 
     /************************************************************************************
      * Construct an empty table from the raw string specifications.
@@ -227,7 +233,6 @@ public class Table implements Serializable
     	Comparable[] tups = index.get(keyVal);
     	List <Comparable []> rows = new ArrayList <> ();
         rows.add(tups);  
-
     	*/
     
         List <Comparable []> rows = new ArrayList <> ();

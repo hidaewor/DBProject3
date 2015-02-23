@@ -70,9 +70,7 @@ public class TestTupleGenerator
                 out.println ();
             } // for
             out.println ();
-        } // for
-        
-        
+        } // for        
          
     } // main
 

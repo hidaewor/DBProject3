@@ -1,6 +1,5 @@
 /*****************************************************************************************
  * @file  Tester.java
- *
  * @author Hope Idaewor
  */
 
@@ -38,7 +37,7 @@ public class Tester {
     String [] tables = { "Student", "Professor"};
     
     /* Insert Tuples */
-    int ntups [] = new int [] {3,3}; //student = 3, professor = 3
+    int ntups [] = new int [] {10,2}; //student = 3, professor = 3
     Comparable[][][] tups = test.generate(ntups);
     for (int i = 0; i <tups.length; i++) {
         for (int j = 0; j < tups[i].length; j++) {
@@ -50,39 +49,41 @@ public class Tester {
                 }
         } // for
         out.println ();
-    } // for
-    
+    } // for    
     
     //Print tables
     student.print();
     professor.print();
     //student.printIndex();
     
-    //Problems from Miller: We need thousands of tuples, put each case in a loop to get the different times for standard deviation
+    //Problems:
+    //1. We need thousands of tuples, put each case in a loop to get the different times for standard deviation
+    //2. Ext & Lin has map arent working in the "set method"
+    //3. BpTree isnt working in split
+    
     long startTime, endTime, duration;
     
     /* Case 1: Select Point Query */
- 
+    
     //--------------------- no index select
     out.println ();
     startTime = System.currentTimeMillis();
-    Table t_select = student.select (t -> t[student.col("status")].equals ("status906606"));
+    Table t_select = student.select (t -> t[student.col("status")].equals ("status998473"));
     endTime = System.currentTimeMillis();
     duration = (endTime - startTime); 
     out.println("No Index time = " + duration + " ms");
-    //t_select.print ();
-    
-    
-    //--------------------- indexed select (currently using BPTreeMap, change in Table.java)
+    t_select.print ();
+ 
+    //--------------------- indexed select (currently using TreeMap, change in Table.java)
     out.println ();
     startTime = System.currentTimeMillis();
-    Table t_iselect = student.select (new KeyType (239978));
+    Table t_iselect = student.select (new KeyType (108800));
     endTime = System.currentTimeMillis();
     duration = (endTime - startTime); 
-    out.println("No Index time = " + duration + " ms");
-    //t_iselect.print ();
- 
+    out.println("Indexed Select time = " + duration + " ms");
+    t_iselect.print ();
 
+ 
    /* Case 2: Select Range Query */
      
      
