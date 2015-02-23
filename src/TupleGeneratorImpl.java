@@ -75,7 +75,7 @@ public class TupleGeneratorImpl
      */
     public Comparable [][][] generate (int [] tuples)
     {
-        Random        rand      = new Random ();
+        Random        rand      = new Random (1);
         String        tableName = "";
         String []     attribute;
         String []     domain;

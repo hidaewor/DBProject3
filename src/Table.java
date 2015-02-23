@@ -7,6 +7,7 @@
 
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -80,7 +81,7 @@ public class Table implements Serializable
         domain    = _domain;
         key       = _key;
         tuples    = new ArrayList <> ();
-        index     = new TreeMap <> ();       // also try BPTreeMap, LinHashMap or ExtHashMap
+        index     = new BpTreeMap (KeyType.class, Comparable[].class);       // also try BPTreeMap, LinHashMap or ExtHashMap
     } // constructor
 
     /************************************************************************************
@@ -100,7 +101,7 @@ public class Table implements Serializable
         domain    = _domain;
         key       = _key;
         tuples    = _tuples;
-        index     = new TreeMap <> ();       // also try BPTreeMap, LinHashMap or ExtHashMap
+        index     = new BpTreeMap (KeyType.class, Comparable[].class);      // also try BPTreeMap, LinHashMap or ExtHashMap
     } // constructor
 
     /************************************************************************************
@@ -202,7 +203,6 @@ public class Table implements Serializable
         Table t = new Table (name + count++, attribute, domain, key, rows2);
         for (int i = 0; i<rows.size(); i++){
         	//t.insert will automatically add that value to the table's index as well
-        	out.println("here");
         	t.insert(rows.get(i));
         }
         return t;
@@ -217,11 +217,21 @@ public class Table implements Serializable
      */
     public Table select (KeyType keyVal)
     {
-        out.println ("RA> " + name + ".select (" + keyVal + ")");
+    	
+    	out.println ("RA> " + name + ".select (" + keyVal + ")");
+    	/*
+    	//Rewrite to use the keyVal to directly grab the tuple at that index
+    	//Instead of creating a set of our indexes
+    	//map get keyVal
+    	
+    	Comparable[] tups = index.get(keyVal);
+    	List <Comparable []> rows = new ArrayList <> ();
+        rows.add(tups);  
 
-      //Initialize the new list
+    	*/
+    
         List <Comparable []> rows = new ArrayList <> ();
-
+        
         //Get a set of the index. This is necessary for iteration of a treemap
         Set set = index.entrySet();
         // Get an iterator for the set
@@ -236,15 +246,13 @@ public class Table implements Serializable
         	 }
         }
        
+    	
       //return a new table with the selected rows
         //Worth noting that if the list of rows is empty, the new table will still be returned, but with no rows
-        List <Comparable []> rows2 = new ArrayList <> ();
-        Table t = new Table (name + count++, attribute, domain, key, rows2);
-        for (int j = 0; j<rows.size(); j++){
-        	//t.insert will automatically add that value to the table's index as well
-        	t.insert(rows.get(j));
-        }
+        Table t = new Table (name + count++, attribute, domain, key, rows);  
         return t;
+        
+    	
     } // select
 
     /************************************************************************************
