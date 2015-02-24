@@ -255,7 +255,13 @@ public class ExtHashMap <K, V>
             	
     		}
     		mod = mod*2;
-    		
+    		if(b.nKeys == 5){
+    			//hashing again not necessary. if everything's in bucket1, then obviously hash will return same value
+    			//i = h (b.key[0]);
+    			System.out.println("here");
+        		splitBucket(b, i);
+        	}
+    		System.out.println("here4");
     	}
     	
     	else{
@@ -308,9 +314,11 @@ public class ExtHashMap <K, V>
         	}
         	hTable.add(b2);
         	if(b.nKeys == 5){
+        		System.out.println("here2");
         		splitBucket(b, i);
         	}
         	if(b2.nKeys ==5){
+        		System.out.println("here3");
         		splitBucket(b2, i);
         	}
     	}
@@ -373,9 +381,15 @@ public class ExtHashMap <K, V>
     {
     	//This HAS to be a power of 2. That's how ExtHashMaps work..
         ExtHashMap <Integer, Integer> ht = new ExtHashMap <> (Integer.class, Integer.class, 2);
-        int nKeys = 35;
+        int nKeys = 100000;
         if (args.length == 1) nKeys = Integer.valueOf (args [0]);
         for (int i = 1; i < nKeys; i += 1) ht.put (i, i * i);
+        /*ht.put(1000,1);
+        ht.put(10000,1);
+        ht.put(100000,1);
+        ht.put(12000,1);
+        ht.put(11000,1);
+        ht.put(13000,1);*/
         ht.print ();
         for (int i = 0; i < nKeys; i++) {
             out.println ("key = " + i + " value = " + ht.get (i));
