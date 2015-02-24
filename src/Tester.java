@@ -37,8 +37,9 @@ public class Tester {
     String [] tables = { "Student", "Professor"};
     
     /* Insert Tuples */
-    int ntups [] = new int [] {1000,2}; //student = 3, professor = 3
+    int ntups [] = new int [] {5000,2000}; //student = 3, professor = 3
     Comparable[][][] tups = test.generate(ntups);
+    out.println("DDL> Inserting 5000 student tuples and 2000 professor tuples...");
     for (int i = 0; i <tups.length; i++) {
         for (int j = 0; j < tups[i].length; j++) {
         	if (tables[i].equals("Student")){
@@ -48,25 +49,19 @@ public class Tester {
                 	professor.insert(tups[i][j]);
                 }
         } // for
-        out.println ();
     } // for    
     
     //Print tables
-    student.print();
-    professor.print();
-    //student.printIndex();
-    
-    //Problems:
-    //1. We need thousands of tuples, put each case in a loop to get the different times for standard deviation
-    //2. Ext & Lin has map arent working in the "set method"
-    //3. BpTree isnt working in split
-    
+    //student.print();
+    //professor.print();
+
     long startTime, endTime, duration;
     
     /* Case 1: Select Point Query */
     
     //--------------------- no index select
     out.println ();
+    out.println("----Case 1.1: Select Point Query, No Index----");
     startTime = System.currentTimeMillis();
     Table t_select = student.select (t -> t[student.col("status")].equals ("status762589"));
     endTime = System.currentTimeMillis();
@@ -74,8 +69,9 @@ public class Tester {
     out.println("No Index time = " + duration + " ms");
     t_select.print ();
  
-    //--------------------- indexed select (currently using TreeMap, change in Table.java)
+    //--------------------- indexed select (currently using TreeMap, change in Table.java constructors)
     out.println ();
+    out.println("----Case 1.2: Select Point Query, Indexed----");
     startTime = System.currentTimeMillis();
     Table t_iselect = student.select (new KeyType (680080));
     endTime = System.currentTimeMillis();
@@ -84,30 +80,52 @@ public class Tester {
     t_iselect.print ();
 
  
-   /* Case 2: Select Range Query */
+   /* Case 2: Select Range Query 
     
     //--------------------- no index select
     out.println ();
+    out.println("----Case 2.1: Select Range Query, No Index----");
     startTime = System.currentTimeMillis();
-    Table t_rselect = student.select (t -> t[student.col("status")].equals ("status762589"));
+    Table t_rselect = student.select (t -> t[student.col("id")].compareTo(o));
     endTime = System.currentTimeMillis();
     duration = (endTime - startTime); 
     out.println("No Index time = " + duration + " ms");
     t_rselect.print ();
-    
+ 
     //--------------------- indexed select (currently using TreeMap, change in Table.java)
     out.println ();
+    out.println("----Case 2.2: Select Range Query, Indexed----");
     startTime = System.currentTimeMillis();
     Table t_riselect = student.select (new KeyType (680080));
     endTime = System.currentTimeMillis();
     duration = (endTime - startTime); 
     out.println("Indexed Select time = " + duration + " ms");
     t_riselect.print ();
+    
+    */
      
   
    /* Case 3: Join */
 
+    //--------------------- no index join
+    out.println ();
+    out.println("----Case 3.1: Join, No Index----");
+    startTime = System.currentTimeMillis();
+    Table t_jselect = student.join ("name", "address", professor);
+    endTime = System.currentTimeMillis();
+    duration = (endTime - startTime); 
+    out.println("No Index time = " + duration + " ms");
+    t_jselect.print ();
     
+    //--------------------- indexed join (currently using TreeMap, change in Table.java)
+    out.println ();
+    out.println("----Case 3.2: Join, Indexed----");
+    startTime = System.currentTimeMillis();
+    Table t_jiselect = student.join ("name", "address", professor);
+    endTime = System.currentTimeMillis();
+    duration = (endTime - startTime); 
+    out.println("No Index time = " + duration + " ms");
+    t_jiselect.print ();
     
 	}//gen
 	

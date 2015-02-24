@@ -82,6 +82,7 @@ public class Table implements Serializable
         domain    = _domain;
         key       = _key;
         tuples    = new ArrayList <> ();
+        /* Adjust the index based on which map you want to just */
         //index = new LinHashMap<> (String.class,Comparable[].class,11); 
         index     = new TreeMap <> ();       
        //index	  = new BpTreeMap<> (String.class, Comparable[].class); 
@@ -105,6 +106,7 @@ public class Table implements Serializable
         domain    = _domain;
         key       = _key;
         tuples    = _tuples;
+        /* Adjust the index based on which map you want to just */
         //index = new LinHashMap<> (String.class,Comparable[].class,11); 
         index     = new TreeMap <> ();       
         //index	  = new BpTreeMap<> (String.class, Comparable[].class); 
@@ -445,7 +447,7 @@ public class Table implements Serializable
      */
     public boolean insert (Comparable [] tup)
     {
-        out.println ("DML> insert into " + name + " values ( " + Arrays.toString (tup) + " )");
+        //out.println ("DML> insert into " + name + " values ( " + Arrays.toString (tup) + " )");
 
         if (typeCheck (tup)) {
             tuples.add (tup);
@@ -645,21 +647,7 @@ public class Table implements Serializable
 
         //Check type of each value in tuple
         for (int j = 0; j < t.length; j++) {
-        	
         	c = t[j].getClass();	//Get type of t[j]
-        	
-        	/*If tuple type is a double, make it a float 
-        	 * since getClass does not recognize 10.0 as float
-        	 
-        	if (t[j] instanceof Double){
-				try {
-					c = Class.forName("java.lang.Float");
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} 
-        	}*/
-       
         	if (!(c.equals(domain[j]))){
                 out.println("type ERROR: expected type of tuple is" + domain[j]);
         		out.println("tuple type is: " + c);
