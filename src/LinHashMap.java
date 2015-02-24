@@ -1,6 +1,5 @@
 
 /************************************************************************************
- /************************************************************************************
  * @file LinHashMap.java
  *
  * @author  John Miller
@@ -8,9 +7,7 @@
 
 import java.io.*;
 import java.lang.reflect.Array;
-
 import static java.lang.System.out;
-
 import java.util.*;
 
 /************************************************************************************
@@ -96,21 +93,6 @@ public class LinHashMap <K, V>
         Set <Map.Entry <K, V>> enSet = new HashSet <> ();
 
         //  T O   B E   I M P L E M E N T E D
-        List<K> a=new ArrayList();
-        List<V> b=new ArrayList();
-        for(int i=0;i<hTable.size();i++){
-        	for(int j=0;j<hTable.get(i).nKeys;j++){
-        		a.add(hTable.get(i).key[j]);
-        		b.add(hTable.get(i).value[j]);
-        	}
-        }
-        Map<K,V> m=new HashMap<K,V>();
-        for(int i=0;i<a.size();i++){
-        	m.put(a.get(i), b.get(i));
-        }
-        enSet.add((java.util.Map.Entry<K, V>) m);
-        
-            
         
         return enSet;
     } // entrySet
@@ -148,7 +130,8 @@ public class LinHashMap <K, V>
        
         if(hTable.size()==0){
         	for(int t=0;t<mod1;t++)
-        		hTable.add(new Bucket(null));
+        	hTable.add(new Bucket(null));
+        	
         }
         if(i<split){
         i=h2(key);
@@ -194,22 +177,30 @@ public class LinHashMap <K, V>
             }
         	
             Bucket spillbucket=hTable.get(split);
-            Bucket oldbucket=new Bucket(null);
-            Bucket newbucket=new Bucket(null);
+//            Bucket oldbucket=new Bucket(null);
+//            Bucket newbucket=new Bucket(null);
             int oldb=0;
             int newb=0;
+            List <K> oldbucketK=new ArrayList <> ();
+            List <V> oldbucketV=new ArrayList <> ();
+            List <K> newbucketK=new ArrayList <> ();
+            List <V> newbucketV=new ArrayList <> ();
             while(spillbucket!=null){
     	        for(int t=0;t<spillbucket.nKeys;t++){
     	        	if(h2(spillbucket.key[t])==split){
-    	        		oldbucket.key[oldb]=spillbucket.key[t];
-    	        		oldbucket.value[oldb]=spillbucket.value[t];
-    	        		oldbucket.nKeys=oldbucket.nKeys+1;
+//    	        		oldbucket.key[oldb]=spillbucket.key[t];
+//    	        		oldbucket.value[oldb]=spillbucket.value[t];
+//    	        		oldbucket.nKeys=oldbucket.nKeys+1;
+    	        		oldbucketK.add(spillbucket.key[t]);
+    	        		oldbucketV.add(spillbucket.value[t]);
     	        		oldb=oldb+1;
     	        	}
     	        	else{
-    	        		newbucket.key[newb]=spillbucket.key[t];
-    	        		newbucket.value[newb]=spillbucket.value[t];
-    	        		newbucket.nKeys=newbucket.nKeys+1;
+//    	        		newbucket.key[newb]=spillbucket.key[t];
+//    	        		newbucket.value[newb]=spillbucket.value[t];
+//    	        		newbucket.nKeys=newbucket.nKeys+1;
+    	        		newbucketK.add(spillbucket.key[t]);
+    	        		newbucketV.add(spillbucket.value[t]);
     	        		newb=newb+1;
     	        	}
     	        }
@@ -222,16 +213,16 @@ public class LinHashMap <K, V>
             while(true){
             	Bucket temp=new Bucket(null);
             	for(int t=0;t<SLOTS;t++){
-            		if(oldb>oldbucket.nKeys-1){
+            		if(oldb>oldbucketV.size()-1){
             			break;
             		}
-            		temp.key[t]=oldbucket.key[oldb];
-            		temp.value[t]=oldbucket.value[oldb];
+            		temp.key[t]=oldbucketK.get(oldb);
+            		temp.value[t]=oldbucketV.get(oldb);
             		temp.nKeys=t+1;
             		oldb=oldb+1;
             	}
             	oldbucketL.add(temp);
-            	if(oldb>oldbucket.nKeys-1){
+            	if(oldb>oldbucketK.size()-1){
             		oldbucketL.add(null);
             		break;
             	}
@@ -239,16 +230,16 @@ public class LinHashMap <K, V>
             while(true){
             	Bucket temp=new Bucket(null);
             	for(int t=0;t<SLOTS;t++){
-            		if(newb>newbucket.nKeys-1){
+            		if(newb>newbucketK.size()-1){
             			break;
             		}
-            		temp.key[t]=newbucket.key[newb];
-            		temp.value[t]=newbucket.value[newb];
+            		temp.key[t]=newbucketK.get(newb);
+            		temp.value[t]=newbucketV.get(newb);
             		temp.nKeys=t+1;
             		newb=newb+1;
             	}
             	newbucketL.add(temp);
-            	if(newb>newbucket.nKeys-1){
+            	if(newb>newbucketK.size()-1){
             		newbucketL.add(null);
             		break;
             	}
@@ -289,7 +280,6 @@ public class LinHashMap <K, V>
             }
         	
         }
-        
         return null;
     } // put
 
@@ -332,7 +322,7 @@ public class LinHashMap <K, V>
      */
     private int h (Object key)
     {
-        return Math.abs(key.hashCode ()) % mod1;
+        return key.hashCode () % mod1;
     } // h
 
     /********************************************************************************
@@ -351,36 +341,24 @@ public class LinHashMap <K, V>
      */
     public static void main (String [] args)
     {
-//        LinHashMap <Integer, Integer> ht = new LinHashMap <> (Integer.class, Integer.class, 11);
-//        int nKeys = 30;
-//        if (args.length == 1) nKeys = Integer.valueOf (args [0]);
-//        //for (int i = 1; i < nKeys; i += 2) ht.put (i, i * i);
-//        for(int i=0;i<30;i++){
-//        	ht.put(i, i);
-//        }
-//        ht.put(36, 36);
-//        ht.put(47, 47);
-//        for(int i=5;i<10;i++){
-//        	ht.put(i*11+3, i*11+3);
-//        }
-//        ht.print ();
-//        for (int i = 0; i < nKeys; i++) {
-//            out.println ("key = " + i + " value = " + ht.get (i));
-//        } // for
-////        out.println ("key = " + "36,dsf,dsf" + " value = " + ht.get ("36,dsf,dsf"));
-//        out.println ("-------------------------------------------");
-//        out.println ("Average number of buckets accessed = " + ht.count / (double) nKeys);
-//       
         LinHashMap <Integer, Integer> ht = new LinHashMap <> (Integer.class, Integer.class, 11);
-        int nKeys = 30;
+        int nKeys = 20000;
         if (args.length == 1) nKeys = Integer.valueOf (args [0]);
-        for (int i = 1; i < nKeys; i += 2) ht.put (i, i * i);
-        ht.print (); 
-        for (int i = 0; i < nKeys; i++) {
+        //for (int i = 1; i < nKeys; i += 2) ht.put (i, i * i);
+        for(int i=0;i<89;i++){
+        	ht.put(i, i);
+        }
+       
+        ht.print ();
+        for (int i = 0; i < 1; i++) {
             out.println ("key = " + i + " value = " + ht.get (i));
         } // for
+//        out.println ("key = " + "36,dsf,dsf" + " value = " + ht.get ("36,dsf,dsf"));
         out.println ("-------------------------------------------");
         out.println ("Average number of buckets accessed = " + ht.count / (double) nKeys);
+       
+        
     } // main
 
 } // LinHashMap class
+

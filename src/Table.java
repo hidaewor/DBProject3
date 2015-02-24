@@ -60,7 +60,8 @@ public class Table implements Serializable
 
     /** Index into tuples (maps key to tuple number).
      */
-    private final Map <KeyType, Comparable []> index;
+    private final Map <String, Comparable []> index;
+    
 
     //----------------------------------------------------------------------------------
     // Constructors
@@ -81,10 +82,10 @@ public class Table implements Serializable
         domain    = _domain;
         key       = _key;
         tuples    = new ArrayList <> ();
-       //index     = new LinHashMap (KeyType.class, Comparable[].class, 2); 
-       //index     = new TreeMap <> ();       
-       //index	  = new BpTreeMap (KeyType.class, Comparable[].class); 
-        index = new ExtHashMap (KeyType.class, Comparable[].class, 2);
+        //index = new LinHashMap<> (String.class,Comparable[].class,11); 
+        index     = new TreeMap <> ();       
+       //index	  = new BpTreeMap<> (String.class, Comparable[].class); 
+       //index = new ExtHashMap<> (String.class, Comparable[].class, 11);
     } // constructor
 
     /************************************************************************************
@@ -104,10 +105,10 @@ public class Table implements Serializable
         domain    = _domain;
         key       = _key;
         tuples    = _tuples;
-        //index     = new LinHashMap (KeyType.class, Comparable[].class, 2); 
-        //index     = new TreeMap <> ();       
-        //index	  = new BpTreeMap (KeyType.class, Comparable[].class); 
-         index = new ExtHashMap (KeyType.class, Comparable[].class, 2);
+        //index = new LinHashMap<> (String.class,Comparable[].class,11); 
+        index     = new TreeMap <> ();       
+        //index	  = new BpTreeMap<> (String.class, Comparable[].class); 
+        //index = new ExtHashMap<> (String.class, Comparable[].class, 11);
         } // constructor
 
     /************************************************************************************
@@ -223,7 +224,7 @@ public class Table implements Serializable
      */
     public Table select (KeyType keyVal)
     {
-    	
+    	/*
     	out.println ("RA> " + name + ".select (" + keyVal + ")");
     	/*
     	//Rewrite to use the keyVal to directly grab the tuple at that index
@@ -233,8 +234,8 @@ public class Table implements Serializable
     	Comparable[] tups = index.get(keyVal);
     	List <Comparable []> rows = new ArrayList <> ();
         rows.add(tups);  
-    	*/
-    
+    	
+  
         List <Comparable []> rows = new ArrayList <> ();
         
         //Get a set of the index. This is necessary for iteration of a treemap
@@ -251,11 +252,30 @@ public class Table implements Serializable
         	 }
         }
        
-    	
       //return a new table with the selected rows
         //Worth noting that if the list of rows is empty, the new table will still be returned, but with no rows
         Table t = new Table (name + count++, attribute, domain, key, rows);  
         return t;
+        
+        */
+        
+		out.println ("RA> " + name + ".select (" + keyVal + ")");
+
+		List<Comparable[]> rows = new ArrayList<> ();
+
+		// ------------IMPLEMENTED------------
+//		Comparable[] keyVal = new Comparable[key.length];
+	//	int[] cols = match (key);
+		String newkey=new String();
+		for (int i = 0; i < keyVal.key.length; i++)
+			newkey = newkey + keyVal.key[i];
+//		for (int j = 0; j < keyVal.key[0]; j++){
+//			keyVal[j] = tup[cols[j]];
+//			newkey=newkey+keyVal[j];
+		
+		rows.add (index.get (newkey));
+
+		return new Table (name + count++, attribute, domain, key, rows);
         
     	
     } // select
@@ -430,9 +450,14 @@ public class Table implements Serializable
         if (typeCheck (tup)) {
             tuples.add (tup);
             Comparable [] keyVal = new Comparable [key.length];
+            String newkey=new String();
+            
             int []        cols   = match (key);
-            for (int j = 0; j < keyVal.length; j++) keyVal [j] = tup [cols [j]];
-            index.put (new KeyType (keyVal), tup);
+            for (int j = 0; j < keyVal.length; j++){
+            	keyVal [j] = tup [cols [j]];
+            	newkey=newkey+keyVal[j];
+        	}
+            index.put(newkey, tup);
             return true;
         } else {
             return false;
@@ -454,24 +479,33 @@ public class Table implements Serializable
      */
     public void print ()
     {
-        out.println ("\n Table " + name);
-        out.print ("|-");
-        for (int i = 0; i < attribute.length; i++) out.print ("---------------");
-        out.println ("-|");
-        out.print ("| ");
-        for (String a : attribute) out.printf ("%15s", a);
-        out.println (" |");
-        out.print ("|-");
-        for (int i = 0; i < attribute.length; i++) out.print ("---------------");
-        out.println ("-|");
-        for (Comparable [] tup : tuples) {
-            out.print ("| ");
-            for (Comparable attr : tup) out.printf ("%15s", attr);
-            out.println (" |");
-        } // for
-        out.print ("|-");
-        for (int i = 0; i < attribute.length; i++) out.print ("---------------");
-        out.println ("-|");
+		if(!this.tuples.isEmpty ())
+		{
+			out.println ("\n Table " + name);
+			out.print ("|-");
+			for (int i = 0; i < attribute.length; i++)
+				out.print ("---------------");
+			out.println ("-|");
+			out.print ("| ");
+			for (String a : attribute)
+				out.printf ("%15s", a);
+			out.println (" |");
+			out.print ("|-");
+			for (int i = 0; i < attribute.length; i++)
+				out.print ("---------------");
+			out.println ("-|");
+			for (Comparable[] tup : tuples)
+			{
+				out.print ("| ");
+				for (Comparable attr : tup)
+					out.printf ("%15s", attr);
+				out.println (" |");
+			} // for
+			out.print ("|-");
+			for (int i = 0; i < attribute.length; i++)
+				out.print ("---------------");
+			out.println ("-|");
+		}
     } // print
 
     /************************************************************************************
@@ -481,7 +515,7 @@ public class Table implements Serializable
     {
         out.println ("\n Index for " + name);
         out.println ("-------------------");
-        for (Map.Entry <KeyType, Comparable []> e : index.entrySet ()) {
+        for (Map.Entry <String, Comparable []> e : index.entrySet ()) {
             out.println (e.getKey () + " -> " + Arrays.toString (e.getValue ()));
         } // for
         out.println ("-------------------");

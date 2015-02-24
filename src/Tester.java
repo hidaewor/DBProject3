@@ -37,7 +37,7 @@ public class Tester {
     String [] tables = { "Student", "Professor"};
     
     /* Insert Tuples */
-    int ntups [] = new int [] {10,2}; //student = 3, professor = 3
+    int ntups [] = new int [] {1000,2}; //student = 3, professor = 3
     Comparable[][][] tups = test.generate(ntups);
     for (int i = 0; i <tups.length; i++) {
         for (int j = 0; j < tups[i].length; j++) {
@@ -68,7 +68,7 @@ public class Tester {
     //--------------------- no index select
     out.println ();
     startTime = System.currentTimeMillis();
-    Table t_select = student.select (t -> t[student.col("status")].equals ("status998473"));
+    Table t_select = student.select (t -> t[student.col("status")].equals ("status762589"));
     endTime = System.currentTimeMillis();
     duration = (endTime - startTime); 
     out.println("No Index time = " + duration + " ms");
@@ -77,7 +77,7 @@ public class Tester {
     //--------------------- indexed select (currently using TreeMap, change in Table.java)
     out.println ();
     startTime = System.currentTimeMillis();
-    Table t_iselect = student.select (new KeyType (108800));
+    Table t_iselect = student.select (new KeyType (680080));
     endTime = System.currentTimeMillis();
     duration = (endTime - startTime); 
     out.println("Indexed Select time = " + duration + " ms");
@@ -85,7 +85,24 @@ public class Tester {
 
  
    /* Case 2: Select Range Query */
-     
+    
+    //--------------------- no index select
+    out.println ();
+    startTime = System.currentTimeMillis();
+    Table t_rselect = student.select (t -> t[student.col("status")].equals ("status762589"));
+    endTime = System.currentTimeMillis();
+    duration = (endTime - startTime); 
+    out.println("No Index time = " + duration + " ms");
+    t_rselect.print ();
+    
+    //--------------------- indexed select (currently using TreeMap, change in Table.java)
+    out.println ();
+    startTime = System.currentTimeMillis();
+    Table t_riselect = student.select (new KeyType (680080));
+    endTime = System.currentTimeMillis();
+    duration = (endTime - startTime); 
+    out.println("Indexed Select time = " + duration + " ms");
+    t_riselect.print ();
      
   
    /* Case 3: Join */
