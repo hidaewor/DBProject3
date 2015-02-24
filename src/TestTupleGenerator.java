@@ -55,9 +55,9 @@ public class TestTupleGenerator
                                             { "crsCode", "Course", "crsCode" },
                                             { "crsCode semester", "Teaching", "crsCode semester" }});
 
-        String [] tables = { "Student", "Professor", "Course", "Transcript", "Teaching" };
+        String [] tables = { "Student", "Professor", "Course", "Teaching", "Transcript" };
         
-        int tups [] = new int [] { 10000, 1000, 2000, 50000, 5000 };
+        int tups [] = new int [] { 40, 40, 40,40, 40 };
     
         Comparable [][][] resultTest = test.generate (tups);
         

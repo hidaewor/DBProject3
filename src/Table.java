@@ -297,8 +297,6 @@ public class Table implements Serializable
 
         List <Comparable []> rows = new ArrayList<Comparable []>();//initializes the list
 
-        //  T O   B E   I M P L E M E N T E D 
-        
         if(compatible(table2)){//if compatible then do the operation
         	       	
         	for(Comparable[] temp1 : tuples){//adds all tuples from table 1
@@ -370,6 +368,24 @@ public class Table implements Serializable
     } // minus
 
     /************************************************************************************
+     * CompareAttr is used in our join methods
+     */
+    public boolean compareAttr(String[] attr1, String[] attr2, Comparable[] row1, Comparable[] row2, Table table2){
+    	
+        int [] newattr1 = this.match(attr1);
+        int [] newattr2 = table2.match(attr2);
+    	boolean check = true;
+    	
+		for(int i=0; i < attr1.length;i++){
+			if(!(row1[newattr1[i]].equals(row2[newattr2[i]]))){
+				check = false;
+				break;
+			}//if
+		}//for
+		
+		return check;
+    }
+    /************************************************************************************
      * Join this table and table2 by performing an equijoin.  Tuples from both tables
      * are compared requiring attributes1 to equal attributes2.  Disambiguate attribute
      * names by append "2" to the end of any duplicate attribute name.
@@ -390,70 +406,66 @@ public class Table implements Serializable
         String [] u_attrs = attributes2.split (" ");
 
         List <Comparable []> rows = new ArrayList <Comparable []> () ;
-        
-        // I M P L E M E N T E D 
-        int [] newattr1 = this.match(t_attrs);
-        int [] newattr2 = table2.match(u_attrs);
-        for(Comparable [] newrows : tuples){
-        	
-        	for(Comparable [] row : table2.tuples){
-        		boolean check = true;
-        		for(int i=0;i<newattr1.length;i++){
-        			if(!(newrows[newattr1[i]].equals(row[newattr2[i]]))){
-        				check = false;
-        				break;
-        			}
-        		}
-        		if(check)
-                	rows.add(ArrayUtil.concat(newrows, row));
-        	}
-        
-        	     	       	
+
+	    for(Comparable [] newrows : tuples){
+	    	for(Comparable [] row : table2.tuples){
+	        		if(compareAttr(t_attrs, u_attrs, newrows, row, table2))
+	                	rows.add(ArrayUtil.concat(newrows, row));
+	        }
         }
-        
-        List <Comparable []> rows2 = new ArrayList <> ();
-        Table t = new Table (name + count++, ArrayUtil.concat (attribute, table2.attribute),
-                ArrayUtil.concat (domain, table2.domain), key, rows2);
-        for (int i = 0; i<rows.size(); i++){
-        	//t.insert will automatically add that value to the table's index as well
-        	t.insert(rows.get(i));
-        }
-  
-        return t;
+	    
+	    return new Table (name + count++, ArrayUtil.concat (attribute, table2.attribute),
+                ArrayUtil.concat (domain, table2.domain), key, rows);
+
     }
     
     /************************************************************************************
-     * Join this table and table2 at the given indexes. 
+     * Join this table and table2 by performing an equijoin in respect to their indexes.
+     * The primary and foreign keys are compared to see if they are equal.  
+     * Tuples from both tables are compared requiring attributes1 to equal attributes2. 
      * 
      * @param keyVal  the key of the first table
      * @param keyVal2  the key of the second table
      * @return  a table with the joined index tuples
      */
-    public Table indexedJoin (String key1, String key2, Table table2)
+    public Table indexedJoin (String attributes1, String attributes2, Table table2)
     {
-    	 out.println ("RA> " + name + ".join (" + key1 + ", " + key2 + ", "
-                 + table2.name + ")");
-
-        boolean check = true;
-        List <Comparable []> rows = new ArrayList <Comparable []> ();
+        out.println ("RA> " + name + ".indexedjoin (" + attributes1 + ", " + attributes2 + ", "
+                + table2.name + ")");
         
-        rows.add (table2.index.get(key2));
-
-		return new Table (name + count++, ArrayUtil.concat (attribute, table2.attribute),
-                ArrayUtil.concat (domain, table2.domain), table2.key, rows);
-		
-        /*
-        //for(Comparable [] newrows : t1){
-        	for(Comparable [] row : t2.tuples){
-        			//rows.add(ArrayUtil.concat(newrows, row));
-        			rows.add(row);
-        		}
-        	//}
-		
-    	Table t = new Table (name + count++, ArrayUtil.concat (attribute, table2.attribute),
-                ArrayUtil.concat (domain, table2.domain), key, rows);
+        String [] attr1 = attributes1.split (" ");
+        String [] attr2 = attributes2.split (" ");
+        
+    	//first see which one is a primary key
+    	KeyType key1 = new KeyType(attributes1);
+    	KeyType key2 = new KeyType(attributes2);
+    	Table fTable = null;
+    	Table pTable = null;
     	
-    	return t;*/
+    	if (key1.equals(new KeyType(key))){
+    		//primary key of table 1
+    		fTable = table2;
+    		pTable = this;
+    		
+    	}
+    	else if (key2.equals(new KeyType(table2.key))){
+    		//primary key of table 2
+    		fTable = this;
+    		pTable = table2;
+    	}
+
+        List <Comparable []> rows = new ArrayList <Comparable []> ();
+
+	    for(Comparable [] newrows: fTable.tuples){
+	    	for(Comparable [] row : pTable.tuples){
+        		if(compareAttr(attr1, attr2, newrows, row, table2))
+                	rows.add(ArrayUtil.concat(row, newrows));	
+        	}
+        }
+	    
+		return new Table (name + count++, ArrayUtil.concat (attribute, table2.attribute),
+                ArrayUtil.concat (domain, table2.domain), key, rows);
+		
     }
     
     /************************************************************************************
