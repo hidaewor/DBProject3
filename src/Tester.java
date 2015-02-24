@@ -39,7 +39,7 @@ public class Tester {
     String [] tables = { "Student", "Professor"};
     
     /* Insert Tuples */
-    int ntups [] = new int [] {5000,2000}; //student = 3, professor = 3
+    int ntups [] = new int [] {100,100}; //student = 3, professor = 3
     Comparable[][][] tups = test.generate(ntups);
     out.println("DDL> Inserting 5000 student tuples and 2000 professor tuples...");
     for (int i = 0; i <tups.length; i++) {
@@ -53,9 +53,9 @@ public class Tester {
         } // for
     } // for    
     
-    /* Print tables
+    //Print tables
     student.print();
-    professor.print(); */
+    professor.print(); 
 
 
     /* Case 1: Select Point Query */
@@ -64,7 +64,7 @@ public class Tester {
     out.println ();
     out.println("----Case 1.1: Select Point Query, No Index----");
     startTime = System.currentTimeMillis();
-    Table t_select = student.select (t -> t[student.col("status")].equals ("status762589"));
+    Table t_select = student.select (t -> t[student.col("status")].equals ("status437613"));
     endTime = System.currentTimeMillis();
     duration = (endTime - startTime); 
     out.println("No Index time = " + duration + " ms");
@@ -74,7 +74,7 @@ public class Tester {
     out.println ();
     out.println("----Case 1.2: Select Point Query, Indexed----");
     startTime = System.currentTimeMillis();
-    Table t_iselect = student.select (new KeyType (680080));
+    Table t_iselect = student.select (new KeyType (96750));
     endTime = System.currentTimeMillis();
     duration = (endTime - startTime); 
     out.println("Indexed Select time = " + duration + " ms");
@@ -129,7 +129,7 @@ public class Tester {
     out.println ();
     out.println("----Case 3.2: Join, Indexed----");
     startTime = System.currentTimeMillis();
-    Table t_jiselect = student.join ("name", "address", professor);
+    Table t_jiselect = student.indexedJoin ("980534","407050",professor);
     endTime = System.currentTimeMillis();
     duration = (endTime - startTime); 
     out.println("No Index time = " + duration + " ms");

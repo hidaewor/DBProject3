@@ -421,7 +421,41 @@ public class Table implements Serializable
   
         return t;
     }
+    
+    /************************************************************************************
+     * Join this table and table2 at the given indexes. 
+     * 
+     * @param keyVal  the key of the first table
+     * @param keyVal2  the key of the second table
+     * @return  a table with the joined index tuples
+     */
+    public Table indexedJoin (String key1, String key2, Table table2)
+    {
+    	 out.println ("RA> " + name + ".join (" + key1 + ", " + key2 + ", "
+                 + table2.name + ")");
 
+        boolean check = true;
+        List <Comparable []> rows = new ArrayList <Comparable []> ();
+        
+        rows.add (table2.index.get(key2));
+
+		return new Table (name + count++, ArrayUtil.concat (attribute, table2.attribute),
+                ArrayUtil.concat (domain, table2.domain), table2.key, rows);
+		
+        /*
+        //for(Comparable [] newrows : t1){
+        	for(Comparable [] row : t2.tuples){
+        			//rows.add(ArrayUtil.concat(newrows, row));
+        			rows.add(row);
+        		}
+        	//}
+		
+    	Table t = new Table (name + count++, ArrayUtil.concat (attribute, table2.attribute),
+                ArrayUtil.concat (domain, table2.domain), key, rows);
+    	
+    	return t;*/
+    }
+    
     /************************************************************************************
      * Return the column position for the given attribute name.
      *
