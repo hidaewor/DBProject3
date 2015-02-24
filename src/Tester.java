@@ -16,6 +16,8 @@ public class Tester {
      */
 	public static void gen(){
 	
+	long startTime, endTime, duration;
+	
 	/* Table Generator */
     TupleGenerator test = new TupleGeneratorImpl ();
 
@@ -51,12 +53,11 @@ public class Tester {
         } // for
     } // for    
     
-    //Print tables
-    //student.print();
-    //professor.print();
+    /* Print tables
+    student.print();
+    professor.print(); */
 
-    long startTime, endTime, duration;
-    
+
     /* Case 1: Select Point Query */
     
     //--------------------- no index select
@@ -79,8 +80,11 @@ public class Tester {
     out.println("Indexed Select time = " + duration + " ms");
     t_iselect.print ();
 
+
  
    /* Case 2: Select Range Query 
+    * Problems: How do we actually put a range in select??
+    * 
     
     //--------------------- no index select
     out.println ();
@@ -105,7 +109,11 @@ public class Tester {
     */
      
   
-   /* Case 3: Join */
+   /* Case 3: Join 
+    * Problems: How do we do an indexed join? 
+    *			Also, the no index join is not returning anything because 
+    *			none of the tuples are equal since they are randomly generated.
+    * */
 
     //--------------------- no index join
     out.println ();
