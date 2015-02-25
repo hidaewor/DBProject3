@@ -231,7 +231,8 @@ public class ExtHashMap <K, V>
                 	b2.nKeys = 0;
                 	newB.nKeys = 0;
                 	for(int num = 0;num <b.nKeys;num++){
-                		if(h(b.key[num])>=mod/2){
+                		//if(h(b.key[num])>=mod/2){
+                		if((int)((b.key[num].hashCode() & 1<<(b.localDepth-1))) !=0){
                 			b2.key[b2.nKeys]=b.key[num];
                 			b2.value[b2.nKeys]=b.value[num];
                 			b2.nKeys +=1;
@@ -277,7 +278,8 @@ public class ExtHashMap <K, V>
         	b2.bNumber = currentB;
         	currentB +=1;
         	for(int num = 0;num <b.nKeys;num++){
-        		if(h(b.key[num])>=mod/2){
+        		//if(h(b.key[num])>=mod/2){
+        		if((int)((b.key[num].hashCode() & 1<<(b.localDepth-1))) !=0){
         			//System.out.println("here8");
         			b2.key[b2.nKeys]=b.key[num];
         			b2.value[b2.nKeys]=b.value[num];

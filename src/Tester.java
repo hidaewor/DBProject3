@@ -37,7 +37,7 @@ public class Tester {
     String [] tables = { "Student", "Professor"};
     
     /* Insert Tuples */
-    int ntups [] = new int [] {1000,2}; //student = 3, professor = 3
+    int ntups [] = new int [] {10000,2}; //student = 3, professor = 3
     Comparable[][][] tups = test.generate(ntups);
     for (int i = 0; i <tups.length; i++) {
         for (int j = 0; j < tups[i].length; j++) {

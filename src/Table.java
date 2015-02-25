@@ -85,7 +85,7 @@ public class Table implements Serializable
         //index = new LinHashMap<> (String.class,Comparable[].class,11); 
         index     = new TreeMap <> ();       
        //index	  = new BpTreeMap<> (String.class, Comparable[].class); 
-       //index = new ExtHashMap<> (String.class, Comparable[].class, 11);
+       //index = new ExtHashMap<> (String.class, Comparable[].class, 1024);
     } // constructor
 
     /************************************************************************************
@@ -108,7 +108,7 @@ public class Table implements Serializable
         //index = new LinHashMap<> (String.class,Comparable[].class,11); 
         index     = new TreeMap <> ();       
         //index	  = new BpTreeMap<> (String.class, Comparable[].class); 
-        //index = new ExtHashMap<> (String.class, Comparable[].class, 11);
+        //index = new ExtHashMap<> (String.class, Comparable[].class, 1024);
         } // constructor
 
     /************************************************************************************
