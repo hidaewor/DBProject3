@@ -135,17 +135,19 @@ public class Tester {
     * however compareTo returns an int.
     * ex: t -> t[student.col("id")].compareTo(student.col("id")
     
-    
+    */
     //--------------------- no index select
     out.println ();
     out.println("----Case 2.1: Select Range Query, No Index----");
     startTime = System.currentTimeMillis();
-    Table t_rselect = student.select (t -> t[student.col("id")].compareTo(student.col("id")));
+    Table t_rselect=student.select(50000, 250000);//I did some research/checked out wiki and I think range query is suppose to be something like this
+    //Table t_rselect = student.select (t -> t[student.col("id")].compareTo(student.col("id")));
     endTime = System.currentTimeMillis();
     duration = (endTime - startTime); 
     out.println("No Index time = " + duration + " ms");
     t_rselect.print ();
  
+   /*
     //--------------------- indexed select (currently using TreeMap, change in Table.java)
     out.println ();
     out.println("----Case 2.2: Select Range Query, Indexed----");

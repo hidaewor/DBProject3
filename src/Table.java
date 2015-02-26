@@ -217,6 +217,7 @@ public class Table implements Serializable
         return t;
     } // select
 
+   /*
     /************************************************************************************
      * Select the tuples satisfying the given predicate (Integer function).
      *
@@ -225,12 +226,61 @@ public class Table implements Serializable
      * @param predicate  the check condition for tuples
      * @return  a table with tuples satisfying the predicate
      */
-    public Table rSelect (Predicate <Comparable []> predicate)
+ /*   public Table rSelect (Predicate <Comparable []> predicate)
     {
         out.println ("RA> " + name + ".select (" + predicate + ")");
         
         return null;
     } // select
+    
+    */
+    
+    /************************************************************************************
+     * Select the tuples that are in between lower bound and upper bound.
+     *lowerBound <= studentId <= upperBound
+     *
+     * #usage movie.select (int lowerBound, int upperBound)
+     *
+     * @param lowerBound	the lowest student id
+     * @param upperBound	the highest student id
+     * @return  a table with tuples in that are within that range
+     */
+    public Table select (int lowerBound, int upperBound)
+    {
+        out.println ("RA> " + name + ".select ("+lowerBound+"<=id<="+upperBound+")");
+        
+        //Initialize the new list
+        List <Comparable []> rows = new ArrayList <> ();
+        //Loop through our current list of tuples
+       for (int i = 0; i<tuples.size(); i++){
+        	//If the tuple in btwn, we want to add it to the new list of rows/tuples
+     /*   	if(((tuples.get(i)[col("id")].compareTo(lowerBound)==0)||(tuples.get(i)[col("id")].compareTo(lowerBound)==1))&&
+        	((tuples.get(i)[col("id")].compareTo(upperBound)==0)||(tuples.get(i)[col("id")].compareTo(lowerBound)==-1))){//might need have issues b/c doing tuple.compareTo(Int)
+        		rows.add(tuples.get(i));
+        	*/
+        		
+    	   int currentStudentID=(int) tuples.get(i)[col("id")];
+    	   	
+        		if(((currentStudentID>=lowerBound))&&(currentStudentID<=upperBound)){
+        				rows.add(tuples.get(i));        	        		        		
+        	}//else do nothing
+        }
+        //return a new table with the selected rows and updated index
+        //Worth noting that if the list of rows is empty, the new table will still be returned, but with no rows
+        List <Comparable []> rows2 = new ArrayList <> ();
+        Table t = new Table (name + count++, attribute, domain, key, rows2);
+        for (int i = 0; i<rows.size(); i++){
+        	//t.insert will automatically add that value to the table's index as well
+        	t.insert(rows.get(i));
+        }
+        return t;
+    } // select
+     
+    
+    
+    
+    
+    
 
     /************************************************************************************
      * Select the tuples satisfying the given key predicate (key = value).  Use an index
