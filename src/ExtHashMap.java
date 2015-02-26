@@ -259,10 +259,10 @@ public class ExtHashMap <K, V>
     		if(b.nKeys == 5){
     			//hashing again not necessary. if everything's in bucket1, then obviously hash will return same value
     			//i = h (b.key[0]);
-    			System.out.println("here");
+    			//System.out.println("here");
         		splitBucket(b, i);
         	}
-    		System.out.println("here4");
+    		//System.out.println("here4");
     	}
     	
     	else{
@@ -316,11 +316,11 @@ public class ExtHashMap <K, V>
         	}
         	hTable.add(b2);
         	if(b.nKeys == 5){
-        		System.out.println("here2");
+        		//System.out.println("here2");
         		splitBucket(b, i);
         	}
         	if(b2.nKeys ==5){
-        		System.out.println("here3");
+        		//System.out.println("here3");
         		splitBucket(b2, i);
         	}
     	}

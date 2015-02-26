@@ -124,7 +124,7 @@ public class Tester {
 	    sum = sum + duration;
 	    out.println("Time " + x + " = " + duration);
     }
-    avg = sum/3;
+    avg = sum/4;
     out.println("Avg Time = " + avg + "ms");
     //t_iselect.print ();
 
@@ -173,7 +173,7 @@ public class Tester {
 	    sum = sum + duration;
 	    out.println("Time " + x + " = " + duration);
     }
-    avg = sum/3;
+    avg = sum/4;
     out.println("Avg Time = " + avg + "ms");
     //t_jselect.print ();
     
@@ -189,7 +189,7 @@ public class Tester {
 	    sum = sum + duration;
 	    out.println("Time " + x + " = " + duration);
     }
-    avg = sum/3;
+    avg = sum/4;
     out.println("Avg Time = " + avg + "ms");
     //t_jiselect.print ();
     
