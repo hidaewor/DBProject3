@@ -64,7 +64,7 @@ public class Tester {
     String [] tables = { "Student", "Professor", "Course", "Teaching", "Transcript" };
     
     /* Insert Tuples */
-    int ntups [] = new int [] {1000,1000,1000,1000,1000}; //IN ORDER
+    int ntups [] = new int [] {1000,50000,1000,1000,1000}; //IN ORDER
     Comparable[][][] tups = test.generate(ntups);
     
     out.println("DDL> Inserting 5000 Students, 2000 Professors, 3000 Transcripts..");
@@ -139,13 +139,15 @@ public class Tester {
     //--------------------- no index select
     out.println ();
     out.println("----Case 2.1: Select Range Query, No Index----");
-    startTime = System.currentTimeMillis();
-    Table t_rselect=student.select(50000, 250000);//I did some research/checked out wiki and I think range query is suppose to be something like this
-    //Table t_rselect = student.select (t -> t[student.col("id")].compareTo(student.col("id")));
-    endTime = System.currentTimeMillis();
-    duration = (endTime - startTime); 
-    out.println("No Index time = " + duration + " ms");
-    t_rselect.print ();
+    for(int x = 0; x < 4; x++){
+	    startTime = System.currentTimeMillis();
+	    Table t_rselect=student.select(50000, 250000);//I did some research/checked out wiki and I think range query is suppose to be something like this
+	    //Table t_rselect = student.select (t -> t[student.col("id")].compareTo(student.col("id")));
+	    endTime = System.currentTimeMillis();
+	    duration = (endTime - startTime); 
+	    out.println("No Index time = " + duration + " ms");
+    }
+    //t_rselect.print ();
  
    /*
     //--------------------- indexed select (currently using TreeMap, change in Table.java)

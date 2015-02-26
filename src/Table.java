@@ -109,8 +109,8 @@ public class Table implements Serializable
         /* Adjust the index based on which map you want to just */
         //index = new LinHashMap<> (String.class,Comparable[].class,11); 
         //index     = new TreeMap <> ();       
-        //index	  = new BpTreeMap<> (String.class, Comparable[].class); 
-        index = new ExtHashMap<> (String.class, Comparable[].class, 1024);
+        index	  = new BpTreeMap<> (String.class, Comparable[].class); 
+        //index = new ExtHashMap<> (String.class, Comparable[].class, 1024);
         } // constructor
 
     /************************************************************************************
