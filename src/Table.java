@@ -108,9 +108,9 @@ public class Table implements Serializable
         tuples    = _tuples;
         /* Adjust the index based on which map you want to just */
         //index = new LinHashMap<> (String.class,Comparable[].class,11); 
-        index     = new TreeMap <> ();       
+        //index     = new TreeMap <> ();       
         //index	  = new BpTreeMap<> (String.class, Comparable[].class); 
-        //index = new ExtHashMap<> (String.class, Comparable[].class, 1024);
+        index = new ExtHashMap<> (String.class, Comparable[].class, 1024);
         } // constructor
 
     /************************************************************************************
@@ -218,6 +218,21 @@ public class Table implements Serializable
     } // select
 
     /************************************************************************************
+     * Select the tuples satisfying the given predicate (Integer function).
+     *
+     * #usage student.select  t -> t[student.col("id")].compareTo(student.col("id"))
+     *
+     * @param predicate  the check condition for tuples
+     * @return  a table with tuples satisfying the predicate
+     */
+    public Table rSelect (Predicate <Comparable []> predicate)
+    {
+        out.println ("RA> " + name + ".select (" + predicate + ")");
+        
+        return null;
+    } // select
+
+    /************************************************************************************
      * Select the tuples satisfying the given key predicate (key = value).  Use an index
      * (Map) to retrieve the tuple with the given key value.
      *
@@ -275,7 +290,7 @@ public class Table implements Serializable
 //			keyVal[j] = tup[cols[j]];
 //			newkey=newkey+keyVal[j];
 		
-		rows.add (index.get (newkey));
+		rows.add (index.get(newkey));
 
 		return new Table (name + count++, attribute, domain, key, rows);
         

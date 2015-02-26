@@ -51,7 +51,7 @@ public class Tester {
     test.addRelSchema ("Transcript",
 			            "studId crsCode semester grade",
 			            "Integer String String String",
-			            "studId crsCode semester",
+			            "studId",
 			            new String [][] {{ "studId", "Student", "id"},
 			                             { "crsCode", "Course", "crsCode" },
 			                             { "crsCode semester", "Teaching", "crsCode semester" }});
@@ -59,12 +59,12 @@ public class Tester {
     /* Create Tables */
     Table student = new Table("student", "id name address status", "Integer String String String", "id");
     Table professor = new Table("professor","id name deptId", "Integer String String","id");
-    Table transcript = new Table("transcript","studId crsCode semester grade", "Integer String String String","studId crsCode semester");
+    Table transcript = new Table("transcript","studId crsCode semester grade", "Integer String String String","studId");
     
     String [] tables = { "Student", "Professor", "Course", "Teaching", "Transcript" };
     
     /* Insert Tuples */
-    int ntups [] = new int [] {40,40,40,40,40}; //IN ORDER
+    int ntups [] = new int [] {5000,5000,5000,5000,5000}; //IN ORDER
     Comparable[][][] tups = test.generate(ntups);
     
     out.println("DDL> Inserting 5000 Students, 2000 Professors, 3000 Transcripts..");
@@ -85,9 +85,10 @@ public class Tester {
     } // for    
     
     //Print tables
-    student.print();
-    professor.print();
-    transcript.print();
+   //student.print();
+   //professor.print();
+    //transcript.print();
+    //student.printIndex();
 
 
     /* Case 1: Select Point Query = COMPLETE*/
@@ -96,7 +97,7 @@ public class Tester {
     out.println ();
     out.println("----Case 1.1: Select Point Query, No Index----");
     startTime = System.currentTimeMillis();
-    Table t_select = student.select (t -> t[student.col("status")].equals ("status437613"));
+    Table t_select = student.select (t -> t[student.col("status")].equals ("status202834"));
     endTime = System.currentTimeMillis();
     duration = (endTime - startTime); 
     out.println("No Index time = " + duration + " ms");
@@ -106,14 +107,13 @@ public class Tester {
     out.println ();
     out.println("----Case 1.2: Select Point Query, Indexed----");
     startTime = System.currentTimeMillis();
-    Table t_iselect = student.select (new KeyType (548985));
+    Table t_iselect = student.select (new KeyType (864198));
     endTime = System.currentTimeMillis();
     duration = (endTime - startTime); 
     out.println("Indexed Select time = " + duration + " ms");
     t_iselect.print ();
 
 
- 
    /* Case 2: Select Range Query 
     * Problems: We need to make a new select function that uses compareTo
     * The current select is (t -> t[student.col("status")].equals() which returns a boolean
@@ -143,7 +143,6 @@ public class Tester {
     
     */
     
-    
    /* Case 3: Join */
 
     //--------------------- no index join
@@ -165,6 +164,7 @@ public class Tester {
     duration = (endTime - startTime); 
     out.println("No Index time = " + duration + " ms");
     t_jiselect.print ();
+    
     
 	}//gen
 	

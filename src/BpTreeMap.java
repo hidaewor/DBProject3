@@ -685,6 +685,12 @@ public class BpTreeMap<K extends Comparable<K>, V> extends AbstractMap<K, V>
 		bpt.put(new Integer(140), new Integer(14000));
 		bpt.put(new Integer(150), new Integer(15000));
 		
+		Integer test;
+		test = bpt.get(120);
+		out.println("test is "+ test);
+		out.println();
+		
+		
 		bpt.print(bpt.root, 0);
 		
 		out.println("Entry Set:");
@@ -725,4 +731,4 @@ public class BpTreeMap<K extends Comparable<K>, V> extends AbstractMap<K, V>
 		out.println("Size: " + bpt.size());
 	} // main
 
-} // BpTreeMap class class
+} // BpTree class
