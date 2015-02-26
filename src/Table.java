@@ -237,7 +237,8 @@ public class Table implements Serializable
     
     /************************************************************************************
      * Select the tuples that are in between lower bound and upper bound.
-     *lowerBound <= studentId <= upperBound
+     * ex:lowerBound <= studentId <= upperBound
+     * Select the tuples satisfying the given key predicate (v1<=id & id<=v2).
      *
      * #usage movie.select (int lowerBound, int upperBound)
      *
@@ -278,6 +279,34 @@ public class Table implements Serializable
      
     
     
+    /************************************************************************************
+     * Select the tuples satisfying the given key predicate (v1<=id & id<=v2).  Use an index
+     * (Map) to retrieve the tuple with the given key value.
+     *
+     * @param keyVal  the lower key value limit
+     * @param UpperkeyVal the upper key value limit
+     * @return  a table with the tuple satisfying the key predicate
+     */
+    public Table select (KeyType keyVal, KeyType UpperkeyVal)
+    {        
+		out.println ("RA> " + name + ".select (" + keyVal + ")");
+		
+		List<Comparable[]> rows = new ArrayList<> ();
+		
+		//index.submap(keyVal, UpperkeyVal);
+		SortedMap resultSub=((SortedMap) index).subMap(keyVal, UpperkeyVal);
+		for (Object e : resultSub.entrySet()){
+			//System.out.println(e);
+			rows.add(index.get(e));
+		}
+	
+		
+		return new Table (name + count++, attribute, domain, key, rows);
+		
+		
+		
+    	
+    } // select
     
     
     

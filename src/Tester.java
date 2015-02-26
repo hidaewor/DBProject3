@@ -147,18 +147,19 @@ public class Tester {
     out.println("No Index time = " + duration + " ms");
     t_rselect.print ();
  
-   /*
+   
     //--------------------- indexed select (currently using TreeMap, change in Table.java)
     out.println ();
     out.println("----Case 2.2: Select Range Query, Indexed----");
     startTime = System.currentTimeMillis();
-    Table t_riselect = student.select (new KeyType (680080));
+    //Table t_riselect = student.select (new KeyType (680080));
+    Table t_riselect = student.select (680080, 900000);
     endTime = System.currentTimeMillis();
     duration = (endTime - startTime); 
     out.println("Indexed Select time = " + duration + " ms");
     t_riselect.print ();
     
-    */
+    
     
    /* Case 3: Join */
 
