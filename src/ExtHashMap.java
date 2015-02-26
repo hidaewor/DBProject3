@@ -22,7 +22,7 @@ public class ExtHashMap <K, V>
 {
     /** The number of slots (for key-value pairs) per bucket.
      */
-    private static final int SLOTS = 4;
+    private static final int SLOTS = 10;
 
     /** The class for type K.
      */
@@ -213,6 +213,7 @@ public class ExtHashMap <K, V>
     		//System.out.println("here2");
     		globalDepth +=1;
     		b.localDepth +=1;
+    		Bucket b2 = new Bucket();
     		for(int startingPoint = mod;startingPoint<mod*2;startingPoint++){
             	dir.add(new Bucket());
     			//dir.add(null);
@@ -224,7 +225,7 @@ public class ExtHashMap <K, V>
             	else{
             		mod = mod*2;
             		//System.out.println("here4");
-            		Bucket b2 = new Bucket();
+            		//Bucket b2 = new Bucket();
                 	Bucket newB = new Bucket();
                 	newB.localDepth = b.localDepth;
                 	b2.localDepth = globalDepth;
@@ -256,11 +257,17 @@ public class ExtHashMap <K, V>
             	
     		}
     		mod = mod*2;
-    		if(b.nKeys == 5){
+    		if(b.nKeys == SLOTS+1){
     			//hashing again not necessary. if everything's in bucket1, then obviously hash will return same value
-    			//i = h (b.key[0]);
+    			i = h (b.key[0]);
     			//System.out.println("here");
         		splitBucket(b, i);
+        	}
+    		if(b2.nKeys == SLOTS+1){
+    			//hashing again not necessary. if everything's in bucket1, then obviously hash will return same value
+    			i = h (b2.key[0]);
+    			//System.out.println("here9");
+        		splitBucket(b2, i);
         	}
     		//System.out.println("here4");
     	}
@@ -315,12 +322,12 @@ public class ExtHashMap <K, V>
         		}
         	}
         	hTable.add(b2);
-        	if(b.nKeys == 5){
+        	if(b.nKeys == SLOTS+1){
         		//System.out.println("here2");
         		splitBucket(b, i);
         	}
-        	if(b2.nKeys ==5){
-        		//System.out.println("here3");
+        	if(b2.nKeys ==SLOTS+1){
+        		//.out.println("here3");
         		splitBucket(b2, i);
         	}
     	}
