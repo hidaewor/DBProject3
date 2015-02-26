@@ -64,7 +64,7 @@ public class Tester {
     String [] tables = { "Student", "Professor", "Course", "Teaching", "Transcript" };
     
     /* Insert Tuples */
-    int ntups [] = new int [] {5000,5000,5000,5000,5000}; //IN ORDER
+    int ntups [] = new int [] {1000,1000,1000,1000,1000}; //IN ORDER
     Comparable[][][] tups = test.generate(ntups);
     
     out.println("DDL> Inserting 5000 Students, 2000 Professors, 3000 Transcripts..");
@@ -96,26 +96,36 @@ public class Tester {
     //--------------------- no index select
     out.println ();
     out.println("----Case 1.1: Select Point Query, No Index----");
-    for(int i = 0;i<3;i++){
+    double sum = 0, avg = 0;
+    for(int x = 0; x < 4; x++){
 	    startTime = System.currentTimeMillis();
 	    Table t_select = student.select (t -> t[student.col("status")].equals ("status202834"));
 	    endTime = System.currentTimeMillis();
 	    duration = (endTime - startTime); 
-	    out.println("No Index time = " + duration + " ms");
+	    if (x!=0){ //skip compililation time
+	    sum = sum + duration;
+	    out.println("Time " + x + " = " + duration);
+	    }
     }
+    avg = sum/3;
+    out.println("Avg Time = " + avg + "ms");
     //t_select.print ();
  
     //--------------------- indexed select (currently using TreeMap, change in Table.java constructors)
     out.println ();
     out.println("----Case 1.2: Select Point Query, Indexed----");
-    for(int i = 0;i<3;i++){
+    sum = 0; avg = 0;
+    for(int x = 0; x < 4; x++){
 	    startTime = System.currentTimeMillis();
 	    Table t_iselect = student.select (new KeyType (864198));
 	    endTime = System.currentTimeMillis();
 	    duration = (endTime - startTime); 
 	    out.println("Indexed Select time = " + duration + " ms");
-	    t_iselect.print ();
+	    sum = sum + duration;
+	    out.println("Time " + x + " = " + duration);
     }
+    avg = sum/3;
+    out.println("Avg Time = " + avg + "ms");
     //t_iselect.print ();
 
 
@@ -153,25 +163,34 @@ public class Tester {
     //--------------------- no index join
     out.println ();
     out.println("----Case 3.1: Join, No Index----");
-    for(int i = 0;i<3;i++){
+    sum = 0; avg = 0;
+    for(int x = 0; x < 4; x++){
 	    startTime = System.currentTimeMillis();
 	    Table t_jselect = student.join("id", "studId", transcript);
 	    endTime = System.currentTimeMillis();
 	    duration = (endTime - startTime); 
 	    out.println("No Index time = " + duration + " ms");
+	    sum = sum + duration;
+	    out.println("Time " + x + " = " + duration);
     }
+    avg = sum/3;
+    out.println("Avg Time = " + avg + "ms");
     //t_jselect.print ();
     
     //--------------------- indexed join, only primary key only has index
     out.println ();
     out.println("----Case 3.2: Join, Indexed----");
-    for(int i = 0;i<3;i++){
+    sum = 0; avg = 0;
+    for(int x = 0; x < 4; x++){
 	    startTime = System.currentTimeMillis();
 	    Table t_jiselect = student.indexedJoin("id", "studId", transcript);
 	    endTime = System.currentTimeMillis();
 	    duration = (endTime - startTime); 
-	    out.println("Index time = " + duration + " ms");
+	    sum = sum + duration;
+	    out.println("Time " + x + " = " + duration);
     }
+    avg = sum/3;
+    out.println("Avg Time = " + avg + "ms");
     //t_jiselect.print ();
     
     
