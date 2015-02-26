@@ -96,22 +96,27 @@ public class Tester {
     //--------------------- no index select
     out.println ();
     out.println("----Case 1.1: Select Point Query, No Index----");
-    startTime = System.currentTimeMillis();
-    Table t_select = student.select (t -> t[student.col("status")].equals ("status202834"));
-    endTime = System.currentTimeMillis();
-    duration = (endTime - startTime); 
-    out.println("No Index time = " + duration + " ms");
-    t_select.print ();
+    for(int i = 0;i<3;i++){
+	    startTime = System.currentTimeMillis();
+	    Table t_select = student.select (t -> t[student.col("status")].equals ("status202834"));
+	    endTime = System.currentTimeMillis();
+	    duration = (endTime - startTime); 
+	    out.println("No Index time = " + duration + " ms");
+    }
+    //t_select.print ();
  
     //--------------------- indexed select (currently using TreeMap, change in Table.java constructors)
     out.println ();
     out.println("----Case 1.2: Select Point Query, Indexed----");
-    startTime = System.currentTimeMillis();
-    Table t_iselect = student.select (new KeyType (864198));
-    endTime = System.currentTimeMillis();
-    duration = (endTime - startTime); 
-    out.println("Indexed Select time = " + duration + " ms");
-    t_iselect.print ();
+    for(int i = 0;i<3;i++){
+	    startTime = System.currentTimeMillis();
+	    Table t_iselect = student.select (new KeyType (864198));
+	    endTime = System.currentTimeMillis();
+	    duration = (endTime - startTime); 
+	    out.println("Indexed Select time = " + duration + " ms");
+	    t_iselect.print ();
+    }
+    //t_iselect.print ();
 
 
    /* Case 2: Select Range Query 
@@ -148,22 +153,26 @@ public class Tester {
     //--------------------- no index join
     out.println ();
     out.println("----Case 3.1: Join, No Index----");
-    startTime = System.currentTimeMillis();
-    Table t_jselect = student.join("id", "studId", transcript);
-    endTime = System.currentTimeMillis();
-    duration = (endTime - startTime); 
-    out.println("No Index time = " + duration + " ms");
-    t_jselect.print ();
+    for(int i = 0;i<3;i++){
+	    startTime = System.currentTimeMillis();
+	    Table t_jselect = student.join("id", "studId", transcript);
+	    endTime = System.currentTimeMillis();
+	    duration = (endTime - startTime); 
+	    out.println("No Index time = " + duration + " ms");
+    }
+    //t_jselect.print ();
     
     //--------------------- indexed join, only primary key only has index
     out.println ();
     out.println("----Case 3.2: Join, Indexed----");
-    startTime = System.currentTimeMillis();
-    Table t_jiselect = student.indexedJoin("id", "studId", transcript);
-    endTime = System.currentTimeMillis();
-    duration = (endTime - startTime); 
-    out.println("No Index time = " + duration + " ms");
-    t_jiselect.print ();
+    for(int i = 0;i<3;i++){
+	    startTime = System.currentTimeMillis();
+	    Table t_jiselect = student.indexedJoin("id", "studId", transcript);
+	    endTime = System.currentTimeMillis();
+	    duration = (endTime - startTime); 
+	    out.println("Index time = " + duration + " ms");
+    }
+    //t_jiselect.print ();
     
     
 	}//gen
