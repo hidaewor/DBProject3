@@ -4,6 +4,8 @@
  */
 
 import static java.lang.System.out;
+
+import java.util.Arrays;
 /*****************************************************************************************
  * This class times our select and joins with the Student Registration Database defined in the
  * Kifer, Bernstein and Lewis 2006 database textbook.
@@ -15,6 +17,8 @@ public class Tester {
      * @param args  the command-line arguments
      */
 	public static void gen(){
+	
+	long startTime, endTime, duration;
 	
 	/* Table Generator */
     TupleGenerator test = new TupleGeneratorImpl ();
@@ -30,84 +34,137 @@ public class Tester {
                        "Integer String String",
                        "id",
                        null);
+    
+    test.addRelSchema ("Course",
+			            "crsCode deptId crsName descr",
+			            "String String String String",
+			            "crsCode",
+			            null);
+
+    test.addRelSchema ("Teaching",
+			            "crsCode semester profId",
+			            "String String Integer",
+			            "crcCode semester",
+			            new String [][] {{ "profId", "Professor", "id" },
+			                             { "crsCode", "Course", "crsCode" }});
+
+    test.addRelSchema ("Transcript",
+			            "studId crsCode semester grade",
+			            "Integer String String String",
+			            "studId crsCode semester",
+			            new String [][] {{ "studId", "Student", "id"},
+			                             { "crsCode", "Course", "crsCode" },
+			                             { "crsCode semester", "Teaching", "crsCode semester" }});
 
     /* Create Tables */
     Table student = new Table("student", "id name address status", "Integer String String String", "id");
     Table professor = new Table("professor","id name deptId", "Integer String String","id");
-    String [] tables = { "Student", "Professor"};
+    Table transcript = new Table("transcript","studId crsCode semester grade", "Integer String String String","studId crsCode semester");
+    
+    String [] tables = { "Student", "Professor", "Course", "Teaching", "Transcript" };
     
     /* Insert Tuples */
-    int ntups [] = new int [] {10000,2}; //student = 3, professor = 3
+    int ntups [] = new int [] {40,40,40,40,40}; //IN ORDER
     Comparable[][][] tups = test.generate(ntups);
+    
+    out.println("DDL> Inserting 5000 Students, 2000 Professors, 3000 Transcripts..");
     for (int i = 0; i <tups.length; i++) {
         for (int j = 0; j < tups[i].length; j++) {
+        	
         	if (tables[i].equals("Student")){
                 	student.insert(tups[i][j]);
                 }
-            else{
+        	else if(tables[i].equals("Professor")){
                 	professor.insert(tups[i][j]);
                 }
+	        else if(tables[i].equals("Transcript")){
+	        		//out.println(Arrays.toString(tups[i][j]));
+	        		transcript.insert(tups[i][j]);
+	        }
         } // for
-        out.println ();
     } // for    
     
     //Print tables
     student.print();
     professor.print();
-    //student.printIndex();
-    
-    //Problems:
-    //1. We need thousands of tuples, put each case in a loop to get the different times for standard deviation
-    //2. Ext & Lin has map arent working in the "set method"
-    //3. BpTree isnt working in split
-    
-    long startTime, endTime, duration;
-    
-    /* Case 1: Select Point Query */
+    transcript.print();
+
+
+    /* Case 1: Select Point Query = COMPLETE*/
     
     //--------------------- no index select
     out.println ();
+    out.println("----Case 1.1: Select Point Query, No Index----");
     startTime = System.currentTimeMillis();
-    Table t_select = student.select (t -> t[student.col("status")].equals ("status762589"));
+    Table t_select = student.select (t -> t[student.col("status")].equals ("status437613"));
     endTime = System.currentTimeMillis();
     duration = (endTime - startTime); 
     out.println("No Index time = " + duration + " ms");
     t_select.print ();
  
-    //--------------------- indexed select (currently using TreeMap, change in Table.java)
+    //--------------------- indexed select (currently using TreeMap, change in Table.java constructors)
     out.println ();
+    out.println("----Case 1.2: Select Point Query, Indexed----");
     startTime = System.currentTimeMillis();
-    Table t_iselect = student.select (new KeyType (680080));
+    Table t_iselect = student.select (new KeyType (548985));
     endTime = System.currentTimeMillis();
     duration = (endTime - startTime); 
     out.println("Indexed Select time = " + duration + " ms");
     t_iselect.print ();
 
+
  
-   /* Case 2: Select Range Query */
+   /* Case 2: Select Range Query 
+    * Problems: We need to make a new select function that uses compareTo
+    * The current select is (t -> t[student.col("status")].equals() which returns a boolean
+    * however compareTo returns an int.
+    * ex: t -> t[student.col("id")].compareTo(student.col("id")
+    
     
     //--------------------- no index select
     out.println ();
+    out.println("----Case 2.1: Select Range Query, No Index----");
     startTime = System.currentTimeMillis();
-    Table t_rselect = student.select (t -> t[student.col("status")].equals ("status762589"));
+    Table t_rselect = student.select (t -> t[student.col("id")].compareTo(student.col("id")));
     endTime = System.currentTimeMillis();
     duration = (endTime - startTime); 
     out.println("No Index time = " + duration + " ms");
     t_rselect.print ();
-    
+ 
     //--------------------- indexed select (currently using TreeMap, change in Table.java)
     out.println ();
+    out.println("----Case 2.2: Select Range Query, Indexed----");
     startTime = System.currentTimeMillis();
     Table t_riselect = student.select (new KeyType (680080));
     endTime = System.currentTimeMillis();
     duration = (endTime - startTime); 
     out.println("Indexed Select time = " + duration + " ms");
     t_riselect.print ();
-     
-  
+    
+    */
+    
+    
    /* Case 3: Join */
 
+    //--------------------- no index join
+    out.println ();
+    out.println("----Case 3.1: Join, No Index----");
+    startTime = System.currentTimeMillis();
+    Table t_jselect = student.join("id", "studId", transcript);
+    endTime = System.currentTimeMillis();
+    duration = (endTime - startTime); 
+    out.println("No Index time = " + duration + " ms");
+    t_jselect.print ();
     
+    //--------------------- indexed join, only primary key only has index
+    out.println ();
+    out.println("----Case 3.2: Join, Indexed----");
+    startTime = System.currentTimeMillis();
+    Table t_jiselect = student.indexedJoin("id", "studId", transcript);
+    endTime = System.currentTimeMillis();
+    duration = (endTime - startTime); 
+    out.println("No Index time = " + duration + " ms");
+    t_jiselect.print ();
     
 	}//gen
 	

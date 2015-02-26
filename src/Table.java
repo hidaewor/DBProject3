@@ -82,6 +82,7 @@ public class Table implements Serializable
         domain    = _domain;
         key       = _key;
         tuples    = new ArrayList <> ();
+        /* Adjust the index based on which map you want to just */
         //index = new LinHashMap<> (String.class,Comparable[].class,11); 
         index     = new TreeMap <> ();       
        //index	  = new BpTreeMap<> (String.class, Comparable[].class); 
@@ -105,6 +106,7 @@ public class Table implements Serializable
         domain    = _domain;
         key       = _key;
         tuples    = _tuples;
+        /* Adjust the index based on which map you want to just */
         //index = new LinHashMap<> (String.class,Comparable[].class,11); 
         index     = new TreeMap <> ();       
         //index	  = new BpTreeMap<> (String.class, Comparable[].class); 
@@ -295,8 +297,6 @@ public class Table implements Serializable
 
         List <Comparable []> rows = new ArrayList<Comparable []>();//initializes the list
 
-        //  T O   B E   I M P L E M E N T E D 
-        
         if(compatible(table2)){//if compatible then do the operation
         	       	
         	for(Comparable[] temp1 : tuples){//adds all tuples from table 1
@@ -368,6 +368,24 @@ public class Table implements Serializable
     } // minus
 
     /************************************************************************************
+     * CompareAttr is used in our join methods
+     */
+    public boolean compareAttr(String[] attr1, String[] attr2, Comparable[] row1, Comparable[] row2, Table table2){
+    	
+        int [] newattr1 = this.match(attr1);
+        int [] newattr2 = table2.match(attr2);
+    	boolean check = true;
+    	
+		for(int i=0; i < attr1.length;i++){
+			if(!(row1[newattr1[i]].equals(row2[newattr2[i]]))){
+				check = false;
+				break;
+			}//if
+		}//for
+		
+		return check;
+    }
+    /************************************************************************************
      * Join this table and table2 by performing an equijoin.  Tuples from both tables
      * are compared requiring attributes1 to equal attributes2.  Disambiguate attribute
      * names by append "2" to the end of any duplicate attribute name.
@@ -388,38 +406,68 @@ public class Table implements Serializable
         String [] u_attrs = attributes2.split (" ");
 
         List <Comparable []> rows = new ArrayList <Comparable []> () ;
-        
-        // I M P L E M E N T E D 
-        int [] newattr1 = this.match(t_attrs);
-        int [] newattr2 = table2.match(u_attrs);
-        for(Comparable [] newrows : tuples){
-        	
-        	for(Comparable [] row : table2.tuples){
-        		boolean check = true;
-        		for(int i=0;i<newattr1.length;i++){
-        			if(!(newrows[newattr1[i]].equals(row[newattr2[i]]))){
-        				check = false;
-        				break;
-        			}
-        		}
-        		if(check)
-                	rows.add(ArrayUtil.concat(newrows, row));
-        	}
-        
-        	     	       	
-        }
-        
-        List <Comparable []> rows2 = new ArrayList <> ();
-        Table t = new Table (name + count++, ArrayUtil.concat (attribute, table2.attribute),
-                ArrayUtil.concat (domain, table2.domain), key, rows2);
-        for (int i = 0; i<rows.size(); i++){
-        	//t.insert will automatically add that value to the table's index as well
-        	t.insert(rows.get(i));
-        }
-  
-        return t;
-    }
 
+	    for(Comparable [] newrows : tuples){
+	    	for(Comparable [] row : table2.tuples){
+	        		if(compareAttr(t_attrs, u_attrs, newrows, row, table2))
+	                	rows.add(ArrayUtil.concat(newrows, row));
+	        }
+        }
+	    
+	    return new Table (name + count++, ArrayUtil.concat (attribute, table2.attribute),
+                ArrayUtil.concat (domain, table2.domain), key, rows);
+
+    }
+    
+    /************************************************************************************
+     * Join this table and table2 by performing an equijoin in respect to their indexes.
+     * The primary and foreign keys are compared to see if they are equal.  
+     * Tuples from both tables are compared requiring attributes1 to equal attributes2. 
+     * 
+     * @param keyVal  the key of the first table
+     * @param keyVal2  the key of the second table
+     * @return  a table with the joined index tuples
+     */
+    public Table indexedJoin (String attributes1, String attributes2, Table table2)
+    {
+        out.println ("RA> " + name + ".indexedjoin (" + attributes1 + ", " + attributes2 + ", "
+                + table2.name + ")");
+        
+        String [] attr1 = attributes1.split (" ");
+        String [] attr2 = attributes2.split (" ");
+        
+    	//first see which one is a primary key
+    	KeyType key1 = new KeyType(attributes1);
+    	KeyType key2 = new KeyType(attributes2);
+    	Table fTable = null;
+    	Table pTable = null;
+    	
+    	if (key1.equals(new KeyType(key))){
+    		//primary key of table 1
+    		fTable = table2;
+    		pTable = this;
+    		
+    	}
+    	else if (key2.equals(new KeyType(table2.key))){
+    		//primary key of table 2
+    		fTable = this;
+    		pTable = table2;
+    	}
+
+        List <Comparable []> rows = new ArrayList <Comparable []> ();
+
+	    for(Comparable [] newrows: fTable.tuples){
+	    	for(Comparable [] row : pTable.tuples){
+        		if(compareAttr(attr1, attr2, newrows, row, table2))
+                	rows.add(ArrayUtil.concat(row, newrows));	
+        	}
+        }
+	    
+		return new Table (name + count++, ArrayUtil.concat (attribute, table2.attribute),
+                ArrayUtil.concat (domain, table2.domain), key, rows);
+		
+    }
+    
     /************************************************************************************
      * Return the column position for the given attribute name.
      *
@@ -445,7 +493,7 @@ public class Table implements Serializable
      */
     public boolean insert (Comparable [] tup)
     {
-        out.println ("DML> insert into " + name + " values ( " + Arrays.toString (tup) + " )");
+        //out.println ("DML> insert into " + name + " values ( " + Arrays.toString (tup) + " )");
 
         if (typeCheck (tup)) {
             tuples.add (tup);
@@ -645,21 +693,7 @@ public class Table implements Serializable
 
         //Check type of each value in tuple
         for (int j = 0; j < t.length; j++) {
-        	
         	c = t[j].getClass();	//Get type of t[j]
-        	
-        	/*If tuple type is a double, make it a float 
-        	 * since getClass does not recognize 10.0 as float
-        	 
-        	if (t[j] instanceof Double){
-				try {
-					c = Class.forName("java.lang.Float");
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} 
-        	}*/
-       
         	if (!(c.equals(domain[j]))){
                 out.println("type ERROR: expected type of tuple is" + domain[j]);
         		out.println("tuple type is: " + c);
