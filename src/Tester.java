@@ -64,7 +64,7 @@ public class Tester {
     String [] tables = { "Student", "Professor", "Course", "Teaching", "Transcript" };
     
     /* Insert Tuples */
-    int ntups [] = new int [] {1000,1000,1000,1000,1000}; //IN ORDER
+    int ntups [] = new int [] {5000,5000,1000,1000,1000}; //IN ORDER
     Comparable[][][] tups = test.generate(ntups);
     
     out.println("DDL> Inserting 5000 Students, 2000 Professors, 3000 Transcripts..");
@@ -120,7 +120,6 @@ public class Tester {
 	    Table t_iselect = student.select (new KeyType (864198));
 	    endTime = System.currentTimeMillis();
 	    duration = (endTime - startTime); 
-	    out.println("Indexed Select time = " + duration + " ms");
 	    sum = sum + duration;
 	    out.println("Time " + x + " = " + duration);
     }
@@ -130,36 +129,41 @@ public class Tester {
 
 
    /* Case 2: Select Range Query 
-    * Problems: We need to make a new select function that uses compareTo
-    * The current select is (t -> t[student.col("status")].equals() which returns a boolean
-    * however compareTo returns an int.
-    * ex: t -> t[student.col("id")].compareTo(student.col("id")
-    
     */
+    
     //--------------------- no index select
     out.println ();
     out.println("----Case 2.1: Select Range Query, No Index----");
-    startTime = System.currentTimeMillis();
-    Table t_rselect=student.select(50000, 250000);//I did some research/checked out wiki and I think range query is suppose to be something like this
-    //Table t_rselect = student.select (t -> t[student.col("id")].compareTo(student.col("id")));
-    endTime = System.currentTimeMillis();
-    duration = (endTime - startTime); 
-    out.println("No Index time = " + duration + " ms");
-    t_rselect.print ();
+    sum = 0; avg = 0;
+    for(int x = 0; x < 4; x++){
+	    startTime = System.currentTimeMillis();
+	    Table t_rselect=student.select(50000, 250000);
+	    endTime = System.currentTimeMillis();
+	    duration = (endTime - startTime); 
+	    sum = sum + duration;
+	    out.println("Time " + x + " = " + duration);
+    }
+    avg = sum/4;
+    out.println("Avg Time = " + avg + "ms");
+    //t_rselect.print ();
  
    
     //--------------------- indexed select (currently using TreeMap, change in Table.java)
     out.println ();
     out.println("----Case 2.2: Select Range Query, Indexed----");
-    startTime = System.currentTimeMillis();
-    //Table t_riselect = student.select (new KeyType (680080));
-    Table t_riselect = student.select (680080, 900000);
-    endTime = System.currentTimeMillis();
-    duration = (endTime - startTime); 
-    out.println("Indexed Select time = " + duration + " ms");
-    t_riselect.print ();
-    
-    
+    sum = 0; avg = 0;
+    for(int x = 0; x < 4; x++){
+	    startTime = System.currentTimeMillis();
+	    Table t_riselect = student.select (680080, 900000);
+	    endTime = System.currentTimeMillis();
+	    duration = (endTime - startTime); 
+	    sum = sum + duration;
+	    out.println("Time " + x + " = " + duration);
+    }
+    avg = sum/4;
+    out.println("Avg Time = " + avg + "ms");
+    //t_riselect.print ();
+   
     
    /* Case 3: Join */
 
