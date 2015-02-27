@@ -128,7 +128,7 @@ public class Tester {
     //t_iselect.print ();
 
 
-   /* Case 2: Select Range Query 
+   /* Case 2: Select Range Query = COMPLETE
     */
     
     //--------------------- no index select
@@ -165,7 +165,7 @@ public class Tester {
     //t_riselect.print ();
    
     
-   /* Case 3: Join */
+   /* Case 3: Join = COMPLETE*/
 
     //--------------------- no index join
     out.println ();
@@ -176,7 +176,6 @@ public class Tester {
 	    Table t_jselect = student.join("id", "studId", transcript);
 	    endTime = System.currentTimeMillis();
 	    duration = (endTime - startTime); 
-	    out.println("No Index time = " + duration + " ms");
 	    sum = sum + duration;
 	    out.println("Time " + x + " = " + duration);
     }

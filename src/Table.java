@@ -81,11 +81,11 @@ public class Table implements Serializable
         attribute = _attribute;
         domain    = _domain;
         key       = _key;
-        tuples    = new ArrayList <> ();
-        /* Adjust the index based on which map you want to just */
+        tuples    = new ArrayList <> ();        
+        /* Adjust the index based on which map you want to use*/
         //index = new LinHashMap<> (String.class,Comparable[].class,11); 
-        //index     = new TreeMap <> ();       
-       index	  = new BpTreeMap<> (String.class, Comparable[].class); 
+       index     = new TreeMap <> ();       
+       //index	  = new BpTreeMap<> (String.class, Comparable[].class); 
        //index = new ExtHashMap<> (String.class, Comparable[].class, 1024);
     } // constructor
 
@@ -108,8 +108,8 @@ public class Table implements Serializable
         tuples    = _tuples;
         /* Adjust the index based on which map you want to just */
         //index = new LinHashMap<> (String.class,Comparable[].class,11); 
-        //index     = new TreeMap <> ();       
-        index	  = new BpTreeMap<> (String.class, Comparable[].class); 
+        index     = new TreeMap <> ();       
+        //index	  = new BpTreeMap<> (String.class, Comparable[].class); 
         //index = new ExtHashMap<> (String.class, Comparable[].class, 1024);
         } // constructor
 
@@ -149,8 +149,7 @@ public class Table implements Serializable
         //asList turns the array into a list and containsAll return true or false
 
         List <Comparable []> rows = new ArrayList<Comparable []>(); //list of future tuples, Comparable are basically objects that can be compared based on their key(a comparable also)
-
-        //  T O   B E   I M P L E M E N T E D 				
+				
         int [] columnLocation = this.match(attrs);
         
         Comparable[] tempt;    //finds the correct column for each row(old tuple) and creates new tuples(rows of the desired information only)    
@@ -320,60 +319,17 @@ public class Table implements Serializable
      */
     public Table select (KeyType keyVal)
     {
-    	/*
-    	out.println ("RA> " + name + ".select (" + keyVal + ")");
-    	/*
-    	//Rewrite to use the keyVal to directly grab the tuple at that index
-    	//Instead of creating a set of our indexes
-    	//map get keyVal
-    	
-    	Comparable[] tups = index.get(keyVal);
-    	List <Comparable []> rows = new ArrayList <> ();
-        rows.add(tups);  
-    	
-  
-        List <Comparable []> rows = new ArrayList <> ();
-        
-        //Get a set of the index. This is necessary for iteration of a treemap
-        Set set = index.entrySet();
-        // Get an iterator for the set
-        Iterator i = set.iterator();
-        // Loop through the index
-        while(i.hasNext()) { 
-        	 Map.Entry entry = (Map.Entry)i.next();
-        	 KeyType aKey = (KeyType)entry.getKey();
-        	 //If the key of the entry matches the key value we're looking for, add it to the new list of rows
-        	 if(aKey.equals(keyVal)){
-        		 rows.add((Comparable[]) entry.getValue());
-        	 }
-        }
-       
-      //return a new table with the selected rows
-        //Worth noting that if the list of rows is empty, the new table will still be returned, but with no rows
-        Table t = new Table (name + count++, attribute, domain, key, rows);  
-        return t;
-        
-        */
-        
-		out.println ("RA> " + name + ".select (" + keyVal + ")");
-
+ 
+  		out.println ("RA> " + name + ".select (" + keyVal + ")");
 		List<Comparable[]> rows = new ArrayList<> ();
-
-		// ------------IMPLEMENTED------------
-//		Comparable[] keyVal = new Comparable[key.length];
-	//	int[] cols = match (key);
 		String newkey=new String();
+		
 		for (int i = 0; i < keyVal.key.length; i++)
 			newkey = newkey + keyVal.key[i];
-//		for (int j = 0; j < keyVal.key[0]; j++){
-//			keyVal[j] = tup[cols[j]];
-//			newkey=newkey+keyVal[j];
 		
 		rows.add (index.get(newkey));
 
 		return new Table (name + count++, attribute, domain, key, rows);
-        
-    	
     } // select
 
     /************************************************************************************
